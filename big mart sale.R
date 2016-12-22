@@ -198,7 +198,7 @@ View(pred1)
 ans<-data.frame(pred1)
 write.csv(ans,"gbm_model.csv")
 
-
+###ranked -40
 
 
 
