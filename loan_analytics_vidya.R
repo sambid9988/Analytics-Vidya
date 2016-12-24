@@ -1,21 +1,49 @@
 train<-read.csv("train_u6lujuX_CVtuZ9i.csv",na.strings = c(""," ","?","NA",NA))
 test<-read.csv("test_Y3wMUE5_7gLdaTN.csv",na.strings = c(""," ","?","NA",NA))
-
+#### reading datasets in R
 colSums(is.na(train))
+##### checking for missing values in all columns
 View(train);View(test)
 dim(train);dim(test)
 str(train)
+####exploring data
 length(unique(train$Loan_ID))
-library(caret)
-library(ggplot2)
-library(data.table)
-library(dplyr)
+library(caret)###machine learning wrapper
+library(ggplot2)### data visualisation
+library(data.table)### faster data manipulation
+library(dplyr)#### data manipulation
 library(xgboost)
-library(mice)
+library(mice)### missing values imputing package
 complete<-bind_rows(train,test)
 str(complete)
 complete<-complete[,-1]
+
 complete$Property_Area<-as.factor(complete$Property_Area)
+#####functions for removing highly correlated features
+remHighcor <- function(data, cutoff, ...){
+  data_cor <- cor(sapply(data, as.numeric), ...)
+  data_cor[is.na(data_cor)] <- 0
+  rem <- findCorrelation(data_cor, cutoff=cutoff, verbose=T)
+  return(rem)
+}
+remHighcor(complete,0.7)
+####functions to data visualize
+          
+###function to graph variable for continous variables        
+tr <- function(a){
+      ggplot(data = traindata, aes(x= a, y=..density..)) + 
+      geom_histogram(fill="blue",color="red",alpha = 0.5,bins =100) +
+      geom_density()            
+      }            
+tr(complete$ApplicantIncome)            
+####function to graph variable against output for categorical variable
+
+all_bar <- function(i){
+  ggplot(train,aes(x=i,fill=output$status_group))+geom_bar(position = "dodge",  color="black")+scale_fill_brewer(palette = "Pastel1")+theme(axis.text.x =element_text(angle  = 60,hjust = 1,size=10))
+}
+all_bar(complete$Married)
+
+###dummy variable(one hot encoding) and data manipulation
 dmy<-dummyVars("~.",data=complete[,1:11])
 trnsf<-data.frame(predict(dmy,newdata=complete[,1:11]))
 str(trnsf)
@@ -35,6 +63,7 @@ x_train<-x_train%>%
 x_test<-x_test%>%
   mutate(total_inc=CoapplicantIncome+ApplicantIncome)
 length(unique(x_train$Loan_Amount_Term))
+###feature engineering EMI
 x_train<-x_train%>%
   mutate(emi=LoanAmount*0.00833*(1+0.00833)^Loan_Amount_Term/((1+0.00833)^Loan_Amount_Term-1))
 x_test<-x_test%>%
@@ -42,11 +71,13 @@ x_test<-x_test%>%
 x_train<-select(x_train,-Loan_Status,everything())
 x_train<-subset(x_train,select = -Dependents.0)
 x_test<-subset(x_test,select =-Dependents.0)
+#### log and sqrt transformation for skewed data
 x_train$ApplicantIncome<-log(x_train$ApplicantIncome)
 x_test$ApplicantIncome<-log(x_test$ApplicantIncome)
 x_train$LoanAmount<-sqrt(x_train$LoanAmount)
 x_test$LoanAmount<-sqrt(x_test$LoanAmount)
-x_train<-x_train%>%
+####feature engineering 
+  x_train<-x_train%>%
   mutate(ratio1=LoanAmount/emi)
 x_test<-x_test%>%
   mutate(ratio1=LoanAmount/emi)
