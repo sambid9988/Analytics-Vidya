@@ -87,7 +87,7 @@ str(all_dum)
 str(combin)
 train<-combin[1:131662,]
 test<-combin[131663:219057,]
-X_features<-c("Trip_Distance","Customer_Since_Months","Life_Style_Index",
+##X_features<-c("Trip_Distance","Customer_Since_Months","Life_Style_Index",
               "Customer_Rating","Cancellation_Last_1Month","Gender",
               "Type_of_Cab_na","Confidence_Life_Style_Index_na",
               "var23_ratio","var123_add","Confidence_Life_Style_Index.A",
