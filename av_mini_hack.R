@@ -87,14 +87,7 @@ str(all_dum)
 str(combin)
 train<-combin[1:131662,]
 test<-combin[131663:219057,]
-##X_features<-c("Trip_Distance","Customer_Since_Months","Life_Style_Index",
-              "Customer_Rating","Cancellation_Last_1Month","Gender",
-              "Type_of_Cab_na","Confidence_Life_Style_Index_na",
-              "var23_ratio","var123_add","Confidence_Life_Style_Index.A",
-              "Confidence_Life_Style_Index.B ","Confidence_Life_Style_Index.C",
-              "Destination_Type.A","Destination_Type.B","Destination_Type.c",
-              "Destination_Type.D","Destination_Type.Other","Type_of_Cab.A",
-              "Type_of_Cab.B","Type_of_Cab.C","Type_of_Cab.D","Type_of_Cab.E")
+
 train$Surge_Pricing_Type<-NULL
 train$Confidence_Life_Style_Index_na<-NULL
 train$Gender<-NULL
